@@ -87,6 +87,26 @@ flowchart TB
 ```
 
 
+## Project Structure
+
+```text
+aws-three-tier-web-architecture/
+│
+├── README.md
+├── architecture.mmd
+│
+└── architecture/
+    ├── vpc-networking.md
+    ├── compute-autoscaling.md
+    ├── database-security.md
+    ├── load-balancing.md
+    ├── security-iam.md
+    └── application-workflow.md
+```
+
+Each documentation file explains a specific part of
+the AWS three-tier architecture.
+
 ## Key Benefits
 
 - Improved application scalability.
