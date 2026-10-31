@@ -1,52 +1,48 @@
 
 flowchart TB
     U["Users / Internet"]
-    IGW["Internet Gateway"]
-    ALB["Application Load Balancer"]
 
-    subgraph AWS["AWS Cloud - Region us-east-1"]
-      subgraph VPC["Amazon VPC - 10.0.0.0/16"]
-        subgraph AZ1["Availability Zone 1"]
-          P1["Public Subnet"]
-          A1["Private Application Subnet"]
-          E1["EC2 Instance - AZ 1"]
-          D1["Private Database Subnet"]
+    subgraph AWS["AWS Cloud"]
+        subgraph VPC["Amazon VPC"]
+            IGW["Internet Gateway"]
+
+            subgraph PUBLIC["Public Subnets - Multi-AZ"]
+                ALB["Application Load Balancer"]
+            end
+
+            subgraph PRIVATE_APP["Private Application Subnets"]
+                ASG["EC2 Auto Scaling Group"]
+                EC2A["EC2 Instance - AZ 1"]
+                EC2B["EC2 Instance - AZ 2"]
+            end
+
+            subgraph PRIVATE_DB["Private Database Subnets"]
+                RDS[("Amazon RDS")]
+            end
         end
-
-        subgraph AZ2["Availability Zone 2"]
-          P2["Public Subnet"]
-          A2["Private Application Subnet"]
-          E2["EC2 Instance - AZ 2"]
-          D2["Private Database Subnet"]
-        end
-
-        ASG["EC2 Auto Scaling Group"]
-        RDS1[("Amazon RDS Primary")]
-        RDS2[("Amazon RDS Standby")]
-      end
     end
 
-    U --> IGW --> ALB
-    ALB --> P1
-    ALB --> P2
-    P1 --> A1
-    P2 --> A2
-    A1 --> E1
-    A2 --> E2
-    ASG -.-> E1
-    ASG -.-> E2
-    E1 --> RDS1
-    E2 --> RDS1
-    RDS1 <-->|Replication| RDS2
+    U --> IGW
+    IGW --> ALB
+    ALB --> EC2A
+    ALB --> EC2B
+    ASG -. manages .-> EC2A
+    ASG -. manages .-> EC2B
+    EC2A --> RDS
+    EC2B --> RDS
 
-    classDef network fill:#dbeafe,stroke:#2563eb,color:#1e3a8a,stroke-width:2px
-    classDef subnet fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px
-    classDef compute fill:#ffedd5,stroke:#ea580c,color:#7c2d12,stroke-width:2px
-    classDef database fill:#f3e8ff,stroke:#9333ea,color:#581c87,stroke-width:2px
-    classDef users fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:2px
+    classDef users fill:#E8EEF7,stroke:#46658F,color:#19365C,stroke-width:2px
+    classDef network fill:#DCEBFA,stroke:#3981C6,color:#174A78,stroke-width:2px
+    classDef compute fill:#FFF0D9,stroke:#D99128,color:#704500,stroke-width:2px
+    classDef database fill:#E6F4E9,stroke:#39945A,color:#185B30,stroke-width:2px
 
     class U users
     class IGW,ALB network
-    class P1,P2,A1,A2,D1,D2 subnet
-    class E1,E2,ASG compute
-    class RDS1,RDS2 database
+    class ASG,EC2A,EC2B compute
+    class RDS database
+
+    style AWS fill:#F8FAFC,stroke:#64748B,stroke-width:2px
+    style VPC fill:#EEF4FA,stroke:#3976A8,stroke-width:2px
+    style PUBLIC fill:#EAF3FC,stroke:#3981C6,stroke-width:1px
+    style PRIVATE_APP fill:#FFF7E9,stroke:#D99128,stroke-width:1px
+    style PRIVATE_DB fill:#EDF8EF,stroke:#39945A,stroke-width:1px
