@@ -166,3 +166,21 @@ been verified.
 - Understanding load balancing and Auto Scaling.
 - Understanding secure database connectivity.
 - Learning how to design scalable cloud infrastructure.
+
+
+## Future Improvements
+
+- Implement the architecture using Terraform.
+- Configure HTTPS using AWS Certificate Manager.
+- Integrate CloudWatch for application monitoring.
+- Configure automated infrastructure deployment.
+- Implement backup and disaster recovery strategies.
+
+## Disclaimer
+
+This repository presents a conceptual AWS reference architecture
+for learning and portfolio demonstration purposes.
+
+The AWS infrastructure has not been deployed or validated
+in a live AWS environment.
+
