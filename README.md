@@ -12,6 +12,26 @@ layers: Web Tier, Application Tier, and Database Tier.
 It uses Amazon VPC, EC2, Application Load Balancer, Auto Scaling,
 Amazon RDS, IAM, Security Groups, and Route Tables.
 
+
+## Real-World Use Case
+
+Consider an e-commerce application where users browse
+products, place orders, and access their account details.
+
+This architecture supports the application as follows:
+
+- **Web Tier:** Receives user requests through the ALB.
+- **Application Tier:** Processes product searches,
+  user requests, and order operations.
+- **Database Tier:** Stores customer, product, and order data.
+
+As application traffic increases, the Auto Scaling Group
+can add EC2 instances based on configured scaling policies.
+
+Amazon RDS remains isolated in private subnets, allowing
+database access only from the application tier.
+
+
 ## Real-World Problem
 
 Applications hosted on a single server can face challenges such as:
