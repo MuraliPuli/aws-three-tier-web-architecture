@@ -1,32 +1,47 @@
 
 flowchart TB
-    U["Users / Internet"]
+    User["Users / Internet"]
+    IGW["Internet Gateway"]
+    ALB["Application Load Balancer"]
 
-    subgraph AWS["AWS Cloud"]
-        subgraph VPC["Amazon VPC"]
-            IGW["Internet Gateway"]
+    subgraph AWS["AWS Cloud - Region us-east-1"]
+        subgraph VPC["Amazon VPC - 10.0.0.0/16"]
 
-            subgraph PUBLIC["Public Subnets - Multi-AZ"]
-                ALB["Application Load Balancer"]
-            end
-
-            subgraph PRIVATE_APP["Private Application Subnets"]
-                ASG["EC2 Auto Scaling Group"]
+            subgraph AZ1["Availability Zone 1"]
+                PUB1["Public Subnet"]
+                APP1["Private Application Subnet"]
                 EC2A["EC2 Instance - AZ 1"]
-                EC2B["EC2 Instance - AZ 2"]
+                DB1["Private Database Subnet"]
+                RDS1[("RDS Primary")]
             end
 
-            subgraph PRIVATE_DB["Private Database Subnets"]
-                RDS["Amazon RDS"]
+            subgraph AZ2["Availability Zone 2"]
+                PUB2["Public Subnet"]
+                APP2["Private Application Subnet"]
+                EC2B["EC2 Instance - AZ 2"]
+                DB2["Private Database Subnet"]
+                RDS2[("RDS Standby")]
             end
+
+            ASG["EC2 Auto Scaling Group"]
+            DBGROUP["RDS Multi-AZ Deployment"]
         end
     end
 
-    U --> IGW
+    User --> IGW
     IGW --> ALB
-    ALB --> EC2A
-    ALB --> EC2B
+    ALB --> PUB1
+    ALB --> PUB2
+    PUB1 --> APP1
+    PUB2 --> APP2
+    APP1 --> EC2A
+    APP2 --> EC2B
+
     ASG -. manages .-> EC2A
     ASG -. manages .-> EC2B
-    EC2A --> RDS
-    EC2B --> RDS
+
+    EC2A --> RDS1
+    EC2B --> RDS1
+    DBGROUP -.-> RDS1
+    DBGROUP -.-> RDS2
+    RDS1 <-->|Synchronous replication| RDS2
