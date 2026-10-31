@@ -1,0 +1,22 @@
+
+flowchart TB
+    Internet["Internet Users"]
+
+    subgraph AWS["AWS Cloud"]
+        ALB["Application Load Balancer"]
+        ALBSG["ALB Security Group"]
+        EC2["EC2 Application Instances"]
+        EC2SG["Application Security Group"]
+        RDS["Amazon RDS"]
+        RDSSG["Database Security Group"]
+    end
+
+    Internet --> ALBSG
+    ALBSG --> ALB
+    ALB --> EC2SG
+    EC2SG --> EC2
+    EC2 --> RDSSG
+    RDSSG --> RDS
+
+    IAM["IAM Role - Least Privilege"]
+    IAM -.-> EC2
