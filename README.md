@@ -127,6 +127,20 @@ aws-three-tier-web-architecture/
 Each documentation file explains a specific part of
 the AWS three-tier architecture.
 
+
+
+## Project Documentation
+
+- [VPC and Networking](architecture/vpc-networking.md)
+- [EC2 and Auto Scaling](architecture/compute-autoscaling.md)
+- [Database and Security](architecture/database-security.md)
+- [Application Load Balancer](architecture/load-balancing.md)
+- [IAM and Security Groups](architecture/security-iam.md)
+- [Application Workflow](architecture/application-workflow.md)
+- [Security Flow Diagram](architecture/security-flow.mmd)
+- [Architecture Diagram Source](architecture.mmd)
+
+
 ## Key Benefits
 
 - Improved application scalability.
