@@ -51,7 +51,41 @@ Security Group rules.
 
 ## Architecture Diagram
 
-Coming soon.
+
+```mermaid
+flowchart TB
+    U["Users / Internet"]
+
+    subgraph AWS["AWS Cloud"]
+        subgraph VPC["Amazon VPC"]
+            IGW["Internet Gateway"]
+
+            subgraph PUBLIC["Public Subnets - Multi-AZ"]
+                ALB["Application Load Balancer"]
+            end
+
+            subgraph PRIVATE_APP["Private Application Subnets"]
+                ASG["EC2 Auto Scaling Group"]
+                EC2A["EC2 Instance - AZ 1"]
+                EC2B["EC2 Instance - AZ 2"]
+            end
+
+            subgraph PRIVATE_DB["Private Database Subnets"]
+                RDS["Amazon RDS"]
+            end
+        end
+    end
+
+    U --> IGW
+    IGW --> ALB
+    ALB --> EC2A
+    ALB --> EC2B
+    ASG -. manages .-> EC2A
+    ASG -. manages .-> EC2B
+    EC2A --> RDS
+    EC2B --> RDS
+```
+
 
 ## Key Benefits
 
