@@ -1,47 +1,52 @@
 
 flowchart TB
-    User["Users / Internet"]
+    U["Users / Internet"]
     IGW["Internet Gateway"]
     ALB["Application Load Balancer"]
 
     subgraph AWS["AWS Cloud - Region us-east-1"]
-        subgraph VPC["Amazon VPC - 10.0.0.0/16"]
-
-            subgraph AZ1["Availability Zone 1"]
-                PUB1["Public Subnet"]
-                APP1["Private Application Subnet"]
-                EC2A["EC2 Instance - AZ 1"]
-                DB1["Private Database Subnet"]
-                RDS1[("RDS Primary")]
-            end
-
-            subgraph AZ2["Availability Zone 2"]
-                PUB2["Public Subnet"]
-                APP2["Private Application Subnet"]
-                EC2B["EC2 Instance - AZ 2"]
-                DB2["Private Database Subnet"]
-                RDS2[("RDS Standby")]
-            end
-
-            ASG["EC2 Auto Scaling Group"]
-            DBGROUP["RDS Multi-AZ Deployment"]
+      subgraph VPC["Amazon VPC - 10.0.0.0/16"]
+        subgraph AZ1["Availability Zone 1"]
+          P1["Public Subnet"]
+          A1["Private Application Subnet"]
+          E1["EC2 Instance - AZ 1"]
+          D1["Private Database Subnet"]
         end
+
+        subgraph AZ2["Availability Zone 2"]
+          P2["Public Subnet"]
+          A2["Private Application Subnet"]
+          E2["EC2 Instance - AZ 2"]
+          D2["Private Database Subnet"]
+        end
+
+        ASG["EC2 Auto Scaling Group"]
+        RDS1[("Amazon RDS Primary")]
+        RDS2[("Amazon RDS Standby")]
+      end
     end
 
-    User --> IGW
-    IGW --> ALB
-    ALB --> PUB1
-    ALB --> PUB2
-    PUB1 --> APP1
-    PUB2 --> APP2
-    APP1 --> EC2A
-    APP2 --> EC2B
+    U --> IGW --> ALB
+    ALB --> P1
+    ALB --> P2
+    P1 --> A1
+    P2 --> A2
+    A1 --> E1
+    A2 --> E2
+    ASG -.-> E1
+    ASG -.-> E2
+    E1 --> RDS1
+    E2 --> RDS1
+    RDS1 <-->|Replication| RDS2
 
-    ASG -. manages .-> EC2A
-    ASG -. manages .-> EC2B
+    classDef network fill:#dbeafe,stroke:#2563eb,color:#1e3a8a,stroke-width:2px
+    classDef subnet fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px
+    classDef compute fill:#ffedd5,stroke:#ea580c,color:#7c2d12,stroke-width:2px
+    classDef database fill:#f3e8ff,stroke:#9333ea,color:#581c87,stroke-width:2px
+    classDef users fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:2px
 
-    EC2A --> RDS1
-    EC2B --> RDS1
-    DBGROUP -.-> RDS1
-    DBGROUP -.-> RDS2
-    RDS1 <-->|Synchronous replication| RDS2
+    class U users
+    class IGW,ALB network
+    class P1,P2,A1,A2,D1,D2 subnet
+    class E1,E2,ASG compute
+    class RDS1,RDS2 database
